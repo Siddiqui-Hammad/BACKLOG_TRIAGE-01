@@ -1,291 +1,580 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useState } from "react";
 import {
-  Cpu,
-  Shield,
+  FileText,
+  Scale,
   Clock,
-  PauseOctagon,
   TrendingUp,
-  Zap,
-  Layers,
-  Brain,
-  CheckCircle2,
-  Sparkles,
+  Handshake,
+  CheckSquare,
+  UserCheck,
   ArrowRight,
-  ShieldCheck,
+  Code,
+  AlertTriangle,
+  Lightbulb,
+  Brain,
+  Star,
+  Check,
+  Building,
+  Calendar,
+  Shield,
+  Rocket,
+  BarChart2,
+  BookOpen,
 } from "lucide-react";
-import { api } from "../services/api";
+import { Navbar } from "../components/Navbar";
 
 export const TriageEngine: React.FC = () => {
-  const [pipelineStatus, setPipelineStatus] = useState<any>(null);
-  const [activeStep, setActiveStep] = useState<number>(1);
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"models" | "rules" | "weights">("models");
+  const [rules, setRules] = useState({
+    undertrial: true,
+    statutory: true,
+    senior: true,
+    compoundable: true,
+    noProgress: true,
+  });
 
-  useEffect(() => {
-    api.getTriageStatus().then((data) => {
-      setPipelineStatus(data);
-      setLoading(false);
-    });
-  }, []);
-
-  const steps = [
+  const flowSteps = [
     {
       num: 1,
-      title: "Legal & Statutory Rule Engine",
-      subtitle: "Hard Constraints & Constitutional Safeguards",
-      icon: Shield,
-      color: "from-red-500 to-rose-600",
-      description:
-        "Scans for hard statutory deadlines (e.g. NI Act 6-month trial guideline, Order 37 CPC summary suits), accused in custody crossing 180 days (Article 21 safeguard), senior citizens (>65 yrs), maintenance/DV emergencies, and bail matters.",
-      inputs: ["Case Type", "Days in Custody", "Statutory Target Date", "Urgency Category"],
-      outputs: ["Legal Urgency Flag (Boolean)", "Urgency Score (0-100)", "Detailed Urgency Flags"],
-      weight: "30% of Hybrid Score",
+      title: "Case Ingestion",
+      points: ["Upload / Add Cases", "Extract Key Info"],
+      icon: FileText,
+      color: "bg-blue-50 text-blue-600 border-blue-100",
+      numBg: "bg-blue-100 text-blue-800",
     },
     {
       num: 2,
-      title: "Case Ageing & Horizon Engine",
-      subtitle: "Pendency Horizon & Historical Longevity",
-      icon: Clock,
-      color: "from-orange-500 to-amber-600",
-      description:
-        "Measures calendar age in days and fractional years from institution date. Classifies cases into Recent (<2 yrs), Ageing (2-5 yrs), Long Pending (5-10 yrs), and Severely Delayed (>10 yrs) using calibrated sigmoid scoring.",
-      inputs: ["Filed Date", "Reference Date (2026-08-21)"],
-      outputs: ["Case Age (Years & Days)", "Age Classification", "Age Score (0-100)"],
-      weight: "25% of Hybrid Score",
+      title: "Legal & Procedural Urgency Check",
+      points: ["Undertrial Rules", "Statutory Deadlines", "Vulnerable Cases"],
+      icon: Scale,
+      color: "bg-rose-50 text-rose-600 border-rose-100",
+      numBg: "bg-rose-100 text-rose-800",
     },
     {
       num: 3,
-      title: "Stagnation & Bottleneck Engine",
-      subtitle: "Inactivity Duration & Hearing Ratios",
-      icon: PauseOctagon,
-      color: "from-amber-500 to-yellow-600",
-      description:
-        "Detects procedural inertia by computing inactive days since last meaningful progress, ratio of adjournments to total hearings, recent consecutive adjournments, and bottleneck stages (Evidence, Written Statement).",
-      inputs: ["Last Progress Date", "Current Stage", "Total Hearings", "Total Adjournments", "Recent Adjournments"],
-      outputs: ["Stagnation Score (0-100)", "Stagnation Level (Low/Moderate/High/Severe)", "Bottleneck Reasons"],
-      weight: "20% of Hybrid Score",
+      title: "Ageing & Stagnation Analysis",
+      points: ["Case Age", "Stage Duration", "No-progress Detection"],
+      icon: Clock,
+      color: "bg-emerald-50 text-emerald-600 border-emerald-100",
+      numBg: "bg-emerald-100 text-emerald-800",
     },
     {
       num: 4,
-      title: "Deterministic ML Delay Predictor",
-      subtitle: "Machine Learning Horizon Estimation",
+      title: "Delay Risk Prediction",
+      points: ["ML + Pattern Analysis", "Historical Trends", "Risk Scoring"],
       icon: TrendingUp,
-      color: "from-purple-500 to-indigo-600",
-      description:
-        "Applies deterministic multi-factor regression models to estimate the expected months to final disposal, delay risk probability (0-100%), and model confidence percentage.",
-      inputs: ["Dispute Type Complexity", "Stage Weight", "Adjournment Velocity", "Custody Indicator"],
-      outputs: ["Delay Risk % (0-100)", "Risk Category (Low/Medium/High)", "Estimated Timeline Range (Months)", "Model Confidence %"],
-      weight: "20% of Hybrid Score",
+      color: "bg-amber-50 text-amber-600 border-amber-100",
+      numBg: "bg-amber-100 text-amber-800",
     },
     {
       num: 5,
-      title: "Fast-Track & ADR Opportunity Engine",
-      subtitle: "Mediation & Lok Adalat Suitability Matching",
-      icon: Zap,
-      color: "from-emerald-500 to-teal-600",
-      description:
-        "Identifies negotiable, settlement-friendly disputes (MACT claims, Section 138 NI Act, Matrimonial recovery, Partition suits) suitable for Fast-Track Special Benches, Court Mediation, or National Lok Adalat.",
-      inputs: ["Case Type", "Current Stage", "Case Age (Years)"],
-      outputs: ["Fast-Track Suitability", "Mediation Suitability", "Lok Adalat Referral Status", "Settlement Feasibility"],
-      weight: "Diversion Screening",
+      title: "Resolution Opportunity Check",
+      points: ["Fast-Track Review", "Mediation / Conciliation", "Lok Adalat"],
+      icon: Handshake,
+      color: "bg-indigo-50 text-indigo-600 border-indigo-100",
+      numBg: "bg-indigo-100 text-indigo-800",
     },
     {
       num: 6,
-      title: "Hybrid Priority Scoring Algorithm",
-      subtitle: "Weighted Multi-Factor Fusion",
-      icon: Layers,
-      color: "from-blue-600 to-indigo-700",
-      description:
-        "Synthesizes Legal Urgency (30%), Age Score (25%), Stagnation Score (20%), Delay Risk (20%), and Special Flags (5%) into an aggregate 0-100 priority score categorized into Critical (>=85), High (70-84), Medium (45-69), Routine (<45).",
-      inputs: ["All 5 Normalized Component Scores"],
-      outputs: ["Hybrid Priority Score (0-100)", "Priority Category", "Factor Breakdown Dictionary"],
-      weight: "Final Prioritization",
+      title: "Hybrid Priority Scoring",
+      points: ["Weighted Scoring", "Explainable Factors", "Transparent Logic"],
+      icon: CheckSquare,
+      color: "bg-sky-50 text-sky-600 border-sky-100",
+      numBg: "bg-sky-100 text-sky-800",
     },
     {
       num: 7,
-      title: "Natural Language Explainability Engine",
-      subtitle: "Human-Readable Judicial Reasoning Dossier",
-      icon: Brain,
-      color: "from-slate-700 to-slate-900",
-      description:
-        "Translates mathematical scores, statutory rule triggers, and stage bottlenecks into plain-English judicial narratives so judges and registry officers understand exactly why a case was prioritized.",
-      inputs: ["Case Metadata", "Complete Triage Analysis Record"],
-      outputs: ["Natural Language Explanation", "Actionable Recommended Directive"],
-      weight: "Transparency & Trust",
+      title: "Judge Review",
+      points: ["Accept / Modify", "Defer / Override", "Feedback Loop"],
+      icon: UserCheck,
+      color: "bg-teal-50 text-teal-600 border-teal-100",
+      numBg: "bg-teal-100 text-teal-800",
     },
   ];
 
   return (
-    <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-6xl mx-auto">
-      {/* Title Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-blue-600 text-white">
-              <Cpu className="w-5 h-5" />
+    <div className="flex-1 bg-[#f8fafc] flex flex-col min-h-screen overflow-y-auto">
+      <Navbar
+        title="Triage Engine"
+        subtitle="How your cases are analyzed and prioritized"
+      />
+
+      <div className="p-8 space-y-6 max-w-[1600px] mx-auto w-full">
+        {/* Top Banner with 7-Step Pipeline Header */}
+        <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-bold text-slate-900">How the Triage Engine Works</h2>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Multi-layered analysis to identify urgent, delayed and fast-resolution cases
+              </p>
             </div>
-            <h1 className="text-lg font-bold text-slate-900">
-              7-Step Triage Engine Architecture
-            </h1>
+            <button
+              onClick={() => alert("Deterministic Weighted Scoring Logic: Score = 0.30*Legal + 0.25*Age + 0.20*Stagnation + 0.20*DelayRisk + 0.05*Other")}
+              className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl text-[11px] font-bold text-slate-700 transition flex items-center gap-1.5 self-start shadow-sm"
+            >
+              <Code className="w-3.5 h-3.5" />
+              <span>View Code Logic &lt;/&gt;</span>
+            </button>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Explore the multi-layer pipeline that prioritizes court dockets with complete explainability
-          </p>
+
+          {/* 7 Connected Step Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-3 items-stretch">
+            {flowSteps.map((step, idx) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.num} className="relative flex flex-col">
+                  <div className="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm flex flex-col justify-between h-full hover:border-indigo-300 transition">
+                    <div>
+                      <div className="flex items-center justify-between mb-2.5">
+                        <span className={`w-5 h-5 rounded-full ${step.numBg} text-[10px] font-bold flex items-center justify-center`}>
+                          {step.num}
+                        </span>
+                        <div className={`p-1.5 rounded-lg ${step.color}`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                      </div>
+                      <h3 className="text-xs font-bold text-slate-900 leading-tight mb-2">
+                        {step.title}
+                      </h3>
+                      <ul className="space-y-1 text-[10px] text-slate-500">
+                        {step.points.map((pt, pIdx) => (
+                          <li key={pIdx} className="flex items-center gap-1">
+                            <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+                            <span>{pt}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  {idx < flowSteps.length - 1 && (
+                    <div className="hidden lg:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10 text-slate-300">
+                      <ArrowRight className="w-3 h-3" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {pipelineStatus && (
-          <div className="flex items-center gap-3">
-            <div className="text-right">
-              <span className="text-[10px] text-slate-400 block font-semibold">Triage Coverage</span>
-              <span className="text-xs font-bold text-emerald-600">
-                {pipelineStatus.total_cases_analyzed} / {pipelineStatus.total_cases_registered} Cases ({pipelineStatus.coverage_percentage}%)
-              </span>
-            </div>
-            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Operational</span>
-            </span>
-          </div>
-        )}
-      </div>
+        {/* Middle Section: 3 Deep-Dive Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* Card 1: Priority Scoring Framework (4 cols) */}
+          <div className="lg:col-span-4 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-5 flex flex-col justify-between">
+            <div>
+              <h3 className="text-xs font-bold text-slate-900">Priority Scoring Framework</h3>
+              <p className="text-[11px] text-slate-500 mt-0.5">Transparent and explainable scoring system</p>
 
-      {/* Interactive Step Navigator */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-        {steps.map((s) => {
-          const Icon = s.icon;
-          const isSelected = activeStep === s.num;
-          return (
-            <button
-              key={s.num}
-              onClick={() => setActiveStep(s.num)}
-              className={`p-3 rounded-xl border text-left transition flex flex-col justify-between ${
-                isSelected
-                  ? "bg-slate-900 text-white border-slate-800 shadow-md ring-2 ring-blue-500/50"
-                  : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span
-                  className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center ${
-                    isSelected ? "bg-blue-500 text-white" : "bg-slate-100 text-slate-700"
-                  }`}
-                >
-                  {s.num}
-                </span>
-                <Icon
-                  className={`w-4 h-4 ${
-                    isSelected ? "text-blue-400" : "text-slate-400"
-                  }`}
-                />
+              {/* Score Donut Meter */}
+              <div className="mt-4 flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <div className="relative w-20 h-20 flex items-center justify-center shrink-0">
+                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                    <path
+                      className="text-slate-200"
+                      strokeWidth="3.5"
+                      stroke="currentColor"
+                      fill="none"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      className="text-indigo-600"
+                      strokeDasharray="85, 100"
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                      stroke="currentColor"
+                      fill="none"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-sm font-extrabold text-slate-900">85%</span>
+                    <span className="text-[8px] text-slate-400 font-medium">Priority Score</span>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                    <AlertTriangle className="w-3 h-3" />
+                    <span>Critical</span>
+                  </span>
+                  <p className="text-[10px] text-slate-500 mt-1">(Threshold: 85-100)</p>
+                </div>
               </div>
-              <p className="text-xs font-bold leading-snug line-clamp-2">
-                {s.title}
-              </p>
-            </button>
-          );
-        })}
-      </div>
 
-      {/* Active Step Deep-Dive Card */}
-      {(() => {
-        const current = steps.find((s) => s.num === activeStep) || steps[0];
-        const Icon = current.icon;
-        return (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`p-3 rounded-xl bg-gradient-to-br ${current.color} text-white shadow-md`}
+              {/* Score Contribution Bars */}
+              <div className="mt-4 space-y-2.5">
+                <div className="text-[11px] font-bold text-slate-700">Score Contribution:</div>
+                <div className="space-y-2 text-[10px]">
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-slate-600">Legal Urgency</span>
+                      <span className="font-bold text-slate-900">30%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-rose-500 rounded-full" style={{ width: "30%" }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-slate-600">Case Age</span>
+                      <span className="font-bold text-slate-900">25%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-amber-500 rounded-full" style={{ width: "25%" }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-slate-600">Stagnation</span>
+                      <span className="font-bold text-slate-900">20%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-yellow-500 rounded-full" style={{ width: "20%" }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-slate-600">Delay Risk</span>
+                      <span className="font-bold text-slate-900">20%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-500 rounded-full" style={{ width: "20%" }}></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-slate-600">Other Factors</span>
+                      <span className="font-bold text-slate-900">5%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: "5%" }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Why Critical? Box */}
+            <div className="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-100 text-indigo-950">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-900 mb-1.5">
+                <Lightbulb className="w-3.5 h-3.5 text-indigo-600" />
+                <span>Why Critical?</span>
+              </div>
+              <ul className="space-y-1 text-[11px] text-slate-600">
+                <li>• Pending for 4.2 years</li>
+                <li>• No meaningful progress for 11 months</li>
+                <li>• Repeated adjournments (12)</li>
+                <li>• High predicted delay risk (82%)</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Card 2: AI Models & Analysis (5 cols) */}
+          <div className="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-xs font-bold text-slate-900">AI Models & Analysis</h3>
+                </div>
+                {/* Tabs */}
+                <div className="flex p-0.5 bg-slate-100 rounded-lg text-[10px] font-bold">
+                  {(["models", "rules", "weights"] as const).map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setActiveTab(t)}
+                      className={`px-2.5 py-1 rounded-md capitalize transition ${
+                        activeTab === t ? "bg-white text-indigo-700 shadow-sm" : "text-slate-500"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Models List */}
+              <div className="space-y-2.5">
+                {/* Model 1 */}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                      <Brain className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-900">Stagnation Detection Model</h4>
+                      <p className="text-[10px] text-slate-500">Identifies long-pending cases with no meaningful progress</p>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 font-bold text-[10px] shrink-0">
+                    Accuracy <span className="text-indigo-700">94.2%</span>
+                  </span>
+                </div>
+
+                {/* Model 2 */}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0">
+                      <TrendingUp className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-900">Delay Risk Prediction Model</h4>
+                      <p className="text-[10px] text-slate-500">Predicts likelihood of further delay using historical patterns</p>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 font-bold text-[10px] shrink-0">
+                    Accuracy <span className="text-blue-700">91.8%</span>
+                  </span>
+                </div>
+
+                {/* Model 3 */}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                      <Handshake className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-900">Resolution Opportunity Model</h4>
+                      <p className="text-[10px] text-slate-500">Identifies cases suitable for fast-track / mediation</p>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 font-bold text-[10px] shrink-0">
+                    Accuracy <span className="text-purple-700">89.6%</span>
+                  </span>
+                </div>
+
+                {/* Model 4 */}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                      <Star className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-900">Priority Classification Engine</h4>
+                      <p className="text-[10px] text-slate-500">Hybrid scoring with rule + ML based approach</p>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold text-[10px] shrink-0">
+                    Explainable 100%
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Features Checkmarks */}
+            <div className="pt-2 border-t border-slate-100">
+              <div className="text-[10px] font-bold text-slate-700 mb-2">Key Features Used for Analysis:</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] text-slate-600 font-medium">
+                <span className="flex items-center gap-1 text-emerald-700">
+                  <Check className="w-3 h-3 text-emerald-600" /> Case Age
+                </span>
+                <span className="flex items-center gap-1 text-emerald-700">
+                  <Check className="w-3 h-3 text-emerald-600" /> Last Progress Date
+                </span>
+                <span className="flex items-center gap-1 text-emerald-700">
+                  <Check className="w-3 h-3 text-emerald-600" /> Hearing History
+                </span>
+                <span className="flex items-center gap-1 text-emerald-700">
+                  <Check className="w-3 h-3 text-emerald-600" /> Adjournment Count
+                </span>
+                <span className="flex items-center gap-1 text-emerald-700">
+                  <Check className="w-3 h-3 text-emerald-600" /> Case Category
+                </span>
+                <span className="flex items-center gap-1 text-emerald-700">
+                  <Check className="w-3 h-3 text-emerald-600" /> Current Stage
+                </span>
+                <span className="flex items-center gap-1 text-emerald-700">
+                  <Check className="w-3 h-3 text-emerald-600" /> Undertrial Status
+                </span>
+                <span className="flex items-center gap-1 text-emerald-700">
+                  <Check className="w-3 h-3 text-emerald-600" /> Statutory Deadlines
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Configurable Rule Engine (3 cols) */}
+          <div className="lg:col-span-3 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-xs font-bold text-slate-900">Configurable Rule Engine</h3>
+                <button
+                  onClick={() => alert("Rule Configuration settings are active in prototype mode.")}
+                  className="text-[10px] font-bold text-indigo-600 hover:text-indigo-700"
                 >
-                  <Icon className="w-6 h-6" />
+                  Edit Rules
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-500 mb-3">Legal and procedural urgency rules (prototype)</p>
+
+              {/* Toggles */}
+              <div className="space-y-3 text-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                      <Scale className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-bold text-slate-800">Undertrial Threshold Alert</div>
+                      <div className="text-[9px] text-slate-400">Flag undertrial cases crossing configured limit</div>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={rules.undertrial}
+                    onChange={(e) => setRules({ ...rules, undertrial: e.target.checked })}
+                    className="toggle-checkbox w-4 h-4 text-indigo-600 rounded"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
+                      <Calendar className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-bold text-slate-800">Statutory Deadline Alert</div>
+                      <div className="text-[9px] text-slate-400">Flag cases nearing legal deadline</div>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={rules.statutory}
+                    onChange={(e) => setRules({ ...rules, statutory: e.target.checked })}
+                    className="toggle-checkbox w-4 h-4 text-indigo-600 rounded"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                      <Shield className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-bold text-slate-800">Senior Citizen / Vulnerable</div>
+                      <div className="text-[9px] text-slate-400">Give higher urgency weightage</div>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={rules.senior}
+                    onChange={(e) => setRules({ ...rules, senior: e.target.checked })}
+                    className="toggle-checkbox w-4 h-4 text-indigo-600 rounded"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                      <Handshake className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-bold text-slate-800">Compoundable Offences</div>
+                      <div className="text-[9px] text-slate-400">Identify settlement opportunities</div>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={rules.compoundable}
+                    onChange={(e) => setRules({ ...rules, compoundable: e.target.checked })}
+                    className="toggle-checkbox w-4 h-4 text-indigo-600 rounded"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                      <Clock className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-bold text-slate-800">No Progress &gt; 6 Months</div>
+                      <div className="text-[9px] text-slate-400">Mark cases with long inactivity</div>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={rules.noProgress}
+                    onChange={(e) => setRules({ ...rules, noProgress: e.target.checked })}
+                    className="toggle-checkbox w-4 h-4 text-indigo-600 rounded"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => alert("Full rule configuration modal")}
+              className="w-full py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 text-center transition flex items-center justify-center gap-1.5"
+            >
+              <span>View Full Rule Configuration</span>
+              <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom Section: Engine Impact (Prototype) */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="flex-1">
+            <h4 className="text-xs font-bold text-slate-900 mb-3">Engine Impact (Prototype)</h4>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Rocket className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">
-                      Phase {current.num} of 7
-                    </span>
-                    <span className="text-xs font-semibold text-slate-500">
-                      {current.weight}
-                    </span>
-                  </div>
-                  <h2 className="text-base font-bold text-slate-900 mt-0.5">
-                    {current.title}
-                  </h2>
-                  <p className="text-xs text-slate-500">{current.subtitle}</p>
+                  <div className="text-lg font-black text-slate-900">27–35%</div>
+                  <div className="text-[10px] text-slate-500 font-medium">Est. Backlog Reduction</div>
                 </div>
               </div>
 
-              <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Deterministic & Verified</span>
-              </div>
-            </div>
-
-            <p className="text-xs text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
-              {current.description}
-            </p>
-
-            {/* Inputs & Outputs Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-blue-50/50 border border-blue-100 space-y-2">
-                <h4 className="font-bold text-xs text-blue-900">
-                  Primary Input Parameters Evaluated:
-                </h4>
-                <ul className="space-y-1 text-xs text-blue-800">
-                  {current.inputs.map((inp, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                      <span>{inp}</span>
-                    </li>
-                  ))}
-                </ul>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-lg font-black text-slate-900">40%</div>
+                  <div className="text-[10px] text-slate-500 font-medium">Faster Case Movement</div>
+                </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 space-y-2">
-                <h4 className="font-bold text-xs text-emerald-900">
-                  Engine Outputs Generated:
-                </h4>
-                <ul className="space-y-1 text-xs text-emerald-800">
-                  {current.outputs.map((out, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                      <span>{out}</span>
-                    </li>
-                  ))}
-                </ul>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                  <BarChart2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-lg font-black text-slate-900">2.3x</div>
+                  <div className="text-[10px] text-slate-500 font-medium">Delay Risk Identification</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                  <Handshake className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-lg font-black text-slate-900">68%</div>
+                  <div className="text-[10px] text-slate-500 font-medium">Fast-Resolution Opportunities</div>
+                </div>
               </div>
             </div>
           </div>
-        );
-      })()}
 
-      {/* Triage Formula & Architecture Summary */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-md border border-slate-800 space-y-4">
-        <div className="flex items-center gap-2 text-blue-400 font-bold text-sm">
-          <Sparkles className="w-4 h-4" />
-          <span>Hybrid Priority Scoring Equation</span>
-        </div>
-
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-blue-200 overflow-x-auto leading-relaxed">
-          Priority Score = (0.30 &times; Legal_Urgency) + (0.25 &times; Age_Score) + (0.20 &times; Stagnation_Score) + (0.20 &times; Delay_Risk) + (0.05 &times; Special_Flags)
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1">
-          <div className="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center">
-            <span className="font-bold text-red-400 block">Critical</span>
-            <span className="text-slate-300 font-mono">Score &ge; 85</span>
-          </div>
-          <div className="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center">
-            <span className="font-bold text-orange-400 block">High</span>
-            <span className="text-slate-300 font-mono">Score 70 - 84</span>
-          </div>
-          <div className="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center">
-            <span className="font-bold text-amber-400 block">Medium</span>
-            <span className="text-slate-300 font-mono">Score 45 - 69</span>
-          </div>
-          <div className="p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-center">
-            <span className="font-bold text-emerald-400 block">Routine</span>
-            <span className="text-slate-300 font-mono">Score &lt; 45</span>
-          </div>
+          <button
+            onClick={() => alert("Research papers and legal datasets referenced: National Judicial Data Grid (NJDG), Law Commission of India 245th Report.")}
+            className="w-full lg:w-auto px-5 py-3 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-900 rounded-xl transition flex items-center justify-between gap-4 group"
+          >
+            <div className="flex items-center gap-2.5 text-left">
+              <BookOpen className="w-5 h-5 text-indigo-600" />
+              <div>
+                <div className="text-xs font-bold">View Methodology & References</div>
+                <div className="text-[10px] text-indigo-600">See research, datasets and references used</div>
+              </div>
+            </div>
+            <ArrowRight className="w-4 h-4 text-indigo-600 group-hover:translate-x-1 transition" />
+          </button>
         </div>
       </div>
     </div>

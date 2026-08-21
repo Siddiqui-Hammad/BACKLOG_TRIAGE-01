@@ -1,119 +1,84 @@
-import React from "react";
+﻿import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
+  Home,
   FileText,
-  Cpu,
-  Bell,
-  BarChart3,
-  Scale,
-  ShieldCheck,
   Zap,
+  BarChart2,
+  Bell,
+  Settings,
+  Scale,
+  User,
+  ChevronDown,
 } from "lucide-react";
 
-interface SidebarProps {
-  currentTab: string;
-  setCurrentTab: (tab: string) => void;
-  alertCount?: number;
-}
+export const Sidebar: React.FC = () => {
+  const location = useLocation();
 
-export const Sidebar: React.FC<SidebarProps> = ({
-  currentTab,
-  setCurrentTab,
-  alertCount = 0,
-}) => {
-  const menuItems = [
-    { id: "dashboard", label: "Overview Dashboard", icon: LayoutDashboard },
-    { id: "cases", label: "Case Docket & List", icon: FileText },
-    { id: "triage", label: "Triage Engine (7-Step)", icon: Cpu, badge: "AI" },
-    { id: "alerts", label: "Actionable Alerts", icon: Bell, count: alertCount },
-    { id: "reports", label: "Audit & Reports", icon: BarChart3 },
+  const navItems = [
+    { path: "/", label: "Dashboard", icon: Home },
+    { path: "/cases", label: "Cases", icon: FileText },
+    { path: "/triage", label: "Triage Engine", icon: Zap },
+    { path: "/reports", label: "Reports", icon: BarChart2 },
+    { path: "/alerts", label: "Alerts", icon: Bell },
+    { path: "/settings", label: "Settings", icon: Settings },
   ];
 
+  const isActive = (path: string) => {
+    if (path === "/" && location.pathname === "/") return true;
+    if (path !== "/" && location.pathname.startsWith(path)) return true;
+    return false;
+  };
+
   return (
-    <aside className="w-64 bg-slate-900 text-slate-100 flex flex-col justify-between border-r border-slate-800 select-none">
+    <aside className="w-64 bg-[#0a1128] text-slate-200 flex flex-col justify-between select-none border-r border-slate-800/60 shrink-0 h-screen sticky top-0">
       <div>
-        {/* Court Header Branding */}
-        <div className="p-5 border-b border-slate-800/80 bg-slate-950/40">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg shadow-blue-500/20 ring-1 ring-white/10">
-              <Scale className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="font-bold text-sm tracking-wide text-white flex items-center gap-1.5">
-                <span>?????-TRIAGE</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 font-semibold border border-blue-500/30">
-                  SIH 2024
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 font-medium">
-                Judicial Backlog Engine
-              </p>
-            </div>
+        {/* Brand Header */}
+        <div className="p-6 pb-4 flex flex-col items-center text-center">
+          <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-3 shadow-inner">
+            <Scale className="w-8 h-8 stroke-[1.75]" />
           </div>
+          <h1 className="text-sm font-bold text-white tracking-tight leading-snug max-w-[180px]">
+            Judicial Case Backlog Triage Engine
+          </h1>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="p-3 space-y-1 mt-2">
-          {menuItems.map((item) => {
+        {/* Nav Links */}
+        <nav className="px-4 py-3 space-y-1.5">
+          {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentTab === item.id;
+            const active = isActive(item.path);
             return (
-              <button
-                key={item.id}
-                onClick={() => setCurrentTab(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-medium transition-all ${
-                  isActive
-                    ? "bg-blue-600 text-white font-semibold shadow-sm shadow-blue-500/30"
-                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  active
+                    ? "bg-[#4338ca] text-white shadow-md shadow-indigo-950/40"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <Icon
-                    className={`w-4 h-4 ${
-                      isActive ? "text-white" : "text-slate-400"
-                    }`}
-                  />
-                  <span>{item.label}</span>
-                </div>
-                {item.count ? (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-red-500 text-white font-bold animate-pulse">
-                    {item.count}
-                  </span>
-                ) : null}
-                {item.badge ? (
-                  <span
-                    className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                      isActive
-                        ? "bg-white/20 text-white"
-                        : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                ) : null}
-              </button>
+                <Icon className={`w-4 h-4 ${active ? "text-white" : "text-slate-400"}`} />
+                <span>{item.label}</span>
+              </Link>
             );
           })}
         </nav>
       </div>
 
-      {/* System Operational Badge & Decision-Support Notice */}
-      <div className="p-4 border-t border-slate-800/80 bg-slate-950/30 space-y-3">
-        <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
-          <span className="flex items-center gap-1.5 font-medium">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            Triage Pipeline
-          </span>
-          <span className="text-emerald-400 font-semibold">Active (7/7)</span>
-        </div>
-
-        <div className="p-2.5 rounded-lg bg-slate-800/60 border border-slate-700/50 text-[10px] text-slate-400 leading-relaxed">
-          <div className="flex items-center gap-1 text-amber-400 font-semibold mb-1">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Judicial Advisory</span>
+      {/* User Profile Pill at Bottom */}
+      <div className="p-4 border-t border-slate-800/80 bg-[#080d20]">
+        <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-800/40 transition cursor-pointer">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
+              <User className="w-4 h-4" />
+            </div>
+            <div className="text-left">
+              <div className="text-xs font-bold text-white leading-tight">Court Officer</div>
+              <div className="text-[10px] text-slate-400">District Court, Delhi</div>
+            </div>
           </div>
-          Advisory prioritization only. Final listing decisions rest with the
-          learned Bench.
+          <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
         </div>
       </div>
     </aside>

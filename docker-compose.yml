@@ -1,0 +1,24 @@
+﻿version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./triage_court.db
+      - ENVIRONMENT=production
+      - CORS_ORIGINS=*
+    volumes:
+      - ./backend/data:/app/backend/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

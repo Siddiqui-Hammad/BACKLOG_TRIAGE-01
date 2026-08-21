@@ -1,444 +1,430 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  AlertOctagon,
-  Flame,
+  UploadCloud,
+  Plus,
   AlertTriangle,
-  CheckCircle2,
-  Zap,
-  ArrowRight,
-  TrendingUp,
+  Flag,
   Clock,
-  PauseCircle,
-  FileCheck,
-  ShieldAlert,
-  Sparkles,
+  Calendar,
+  Users,
+  ArrowRight,
+  FileText,
+  Hourglass,
+  Shield,
+  ChevronRight,
+  List,
 } from "lucide-react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
-import { DashboardStats } from "../types";
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
+import { Navbar } from "../components/Navbar";
+import { AddCaseModal } from "../components/AddCaseModal";
+import { UploadCsvModal } from "../components/UploadCsvModal";
 import { api } from "../services/api";
 
-interface DashboardProps {
-  onNavigateToCases: (filter?: Record<string, string>) => void;
-  onNavigateToCaseDetail: (caseId: string) => void;
-}
-
-export const Dashboard: React.FC<DashboardProps> = ({
-  onNavigateToCases,
-  onNavigateToCaseDetail,
-}) => {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
-  const fetchMetrics = async () => {
+  const fetchStats = async () => {
     try {
       setLoading(true);
       const data = await api.getDashboard();
       setStats(data);
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchMetrics();
+    fetchStats();
   }, []);
 
-  if (loading || !stats) {
-    return (
-      <div className="flex-1 p-8 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-xs font-semibold text-slate-500">
-            Synthesizing 7-Step Triage Docket Intelligence...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Chart Data
-  const priorityChartData = [
-    { name: "Critical", value: stats.summary_cards.critical, color: "#ef4444" },
-    { name: "High", value: stats.summary_cards.high, color: "#f97316" },
-    { name: "Medium", value: stats.summary_cards.medium, color: "#eab308" },
-    { name: "Routine", value: stats.summary_cards.routine, color: "#10b981" },
+  const priorityData = [
+    { name: "Critical", count: 128, percent: "6.2%", color: "#ef4444" },
+    { name: "High Priority", count: 326, percent: "15.9%", color: "#f97316" },
+    { name: "Medium Priority", count: 542, percent: "26.4%", color: "#f59e0b" },
+    { name: "Routine", count: 842, percent: "41.0%", color: "#10b981" },
+    { name: "Fast-Track Eligible", count: 214, percent: "10.5%", color: "#6366f1" },
   ];
 
-  const delayChartData = [
-    {
-      category: "High Delay Risk",
-      count: stats.delay_distribution.high_delay,
-      fill: "#ef4444",
-    },
-    {
-      category: "Medium Delay Risk",
-      count: stats.delay_distribution.medium_delay,
-      fill: "#f59e0b",
-    },
-    {
-      category: "Low Delay Risk",
-      count: stats.delay_distribution.low_delay,
-      fill: "#10b981",
-    },
+  const delayData = [
+    { name: "High Delay", count: 512, fill: "#ef4444" },
+    { name: "Medium Delay", count: 862, fill: "#f97316" },
+    { name: "Low Delay", count: 678, fill: "#10b981" },
   ];
 
   return (
-    <div className="flex-1 p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto">
-      {/* Top Banner Notice */}
-      <div className="p-4 rounded-xl bg-gradient-to-r from-blue-900 to-indigo-950 text-white shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-blue-800/60">
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-blue-500/20 border border-blue-400/30 text-blue-300">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="font-bold text-sm text-white">
-              Judicial Case Backlog Triage Engine
-            </h2>
-            <p className="text-xs text-blue-200 mt-0.5 max-w-2xl leading-relaxed">
-              Multi-factor hybrid prioritization combining statutory legal rules,
-              stagnation detection, age analysis, and ML delay risk.
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={() => onNavigateToCases()}
-          className="shrink-0 px-4 py-2 bg-blue-500 hover:bg-blue-400 text-white rounded-lg text-xs font-bold shadow-md shadow-blue-500/20 transition flex items-center gap-2"
-        >
-          <span>View Prioritized Docket</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
+    <div className="flex-1 bg-[#f8fafc] flex flex-col min-h-screen overflow-y-auto">
+      <Navbar
+        title="Dashboard"
+        subtitle="Overview of pending cases and AI-prioritization insights"
+      />
 
-      {/* 5 Core Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {/* Critical Card */}
-        <div
-          onClick={() => onNavigateToCases({ priority: "Critical" })}
-          className="bg-white p-4 rounded-xl border border-red-200/80 shadow-sm hover:shadow-md transition cursor-pointer group"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-red-600 tracking-wider uppercase">
-              Critical
-            </span>
-            <div className="p-1.5 rounded-md bg-red-50 text-red-600 group-hover:scale-110 transition">
-              <AlertOctagon className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-red-700">
-              {stats.summary_cards.critical}
-            </span>
-            <span className="text-[10px] text-slate-500 font-medium">cases</span>
-          </div>
-          <p className="text-[11px] text-slate-500 mt-1">
-            Score &ge; 85 | Immediate listing
-          </p>
-        </div>
-
-        {/* High Card */}
-        <div
-          onClick={() => onNavigateToCases({ priority: "High" })}
-          className="bg-white p-4 rounded-xl border border-orange-200/80 shadow-sm hover:shadow-md transition cursor-pointer group"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-orange-600 tracking-wider uppercase">
-              High Priority
-            </span>
-            <div className="p-1.5 rounded-md bg-orange-50 text-orange-600 group-hover:scale-110 transition">
-              <Flame className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-orange-700">
-              {stats.summary_cards.high}
-            </span>
-            <span className="text-[10px] text-slate-500 font-medium">cases</span>
-          </div>
-          <p className="text-[11px] text-slate-500 mt-1">
-            Score 70-84 | Urgent attention
-          </p>
-        </div>
-
-        {/* Medium Card */}
-        <div
-          onClick={() => onNavigateToCases({ priority: "Medium" })}
-          className="bg-white p-4 rounded-xl border border-amber-200/80 shadow-sm hover:shadow-md transition cursor-pointer group"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-amber-600 tracking-wider uppercase">
-              Medium
-            </span>
-            <div className="p-1.5 rounded-md bg-amber-50 text-amber-600 group-hover:scale-110 transition">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-amber-700">
-              {stats.summary_cards.medium}
-            </span>
-            <span className="text-[10px] text-slate-500 font-medium">cases</span>
-          </div>
-          <p className="text-[11px] text-slate-500 mt-1">
-            Score 45-69 | Standard roster
-          </p>
-        </div>
-
-        {/* Routine Card */}
-        <div
-          onClick={() => onNavigateToCases({ priority: "Routine" })}
-          className="bg-white p-4 rounded-xl border border-emerald-200/80 shadow-sm hover:shadow-md transition cursor-pointer group"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-emerald-600 tracking-wider uppercase">
-              Routine
-            </span>
-            <div className="p-1.5 rounded-md bg-emerald-50 text-emerald-600 group-hover:scale-110 transition">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-emerald-700">
-              {stats.summary_cards.routine}
-            </span>
-            <span className="text-[10px] text-slate-500 font-medium">cases</span>
-          </div>
-          <p className="text-[11px] text-slate-500 mt-1">
-            Score &lt; 45 | Regular progression
-          </p>
-        </div>
-
-        {/* Fast-Track Opportunity Card */}
-        <div
-          onClick={() => onNavigateToCases({ fast_track: "Eligible" })}
-          className="bg-white p-4 rounded-xl border border-purple-200/80 shadow-sm hover:shadow-md transition cursor-pointer group col-span-2 md:col-span-1"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-purple-600 tracking-wider uppercase">
-              Fast-Track / ADR
-            </span>
-            <div className="p-1.5 rounded-md bg-purple-50 text-purple-600 group-hover:scale-110 transition">
-              <Zap className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-purple-700">
-              {stats.summary_cards.fast_track_eligible}
-            </span>
-            <span className="text-[10px] text-slate-500 font-medium">cases</span>
-          </div>
-          <p className="text-[11px] text-slate-500 mt-1">
-            Mediation / Lok Adalat candidates
-          </p>
-        </div>
-      </div>
-
-      {/* 3 Core System Health KPI Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-blue-50 text-blue-600">
-            <FileCheck className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">Total Pending Cases</p>
-            <p className="text-xl font-bold text-slate-900 mt-0.5">
-              {stats.total_pending_cases} Cases
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-amber-50 text-amber-600">
-            <Clock className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">Average Pendency Age</p>
-            <p className="text-xl font-bold text-slate-900 mt-0.5">
-              {stats.avg_case_age_years} Years
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-rose-50 text-rose-600">
-            <PauseCircle className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-xs text-slate-500 font-medium">Stagnating Cases (&gt;90d inactive)</p>
-            <p className="text-xl font-bold text-slate-900 mt-0.5">
-              {stats.stagnating_cases_count} Cases
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Visual Analytics Row: Donut Chart & Horizontal Bar Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Priority Breakdown Donut Chart */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-2">
+      <div className="p-8 space-y-6 max-w-[1600px] mx-auto w-full">
+        {/* Top Section: Left Upload Box + Right 5 Summary Cards */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+          {/* Add / Upload Cases Card (4 cols) */}
+          <div className="xl:col-span-4 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
             <div>
-              <h3 className="font-bold text-sm text-slate-900">
-                Docket Breakdown by Triage Priority
-              </h3>
-              <p className="text-xs text-slate-500">
-                Determined by 7-phase hybrid weighted model
-              </p>
-            </div>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-              Live Roster
-            </span>
-          </div>
+              <h2 className="text-sm font-bold text-slate-900">Add / Upload Cases</h2>
+              <p className="text-[11px] text-slate-500 mt-0.5">Upload CSV/Excel or add cases manually</p>
 
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={priorityChartData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={85}
-                  paddingAngle={4}
-                  dataKey="value"
-                >
-                  {priorityChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value: any) => [`${value} cases`, "Count"]}
-                  contentStyle={{
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                    border: "1px solid #e2e8f0",
-                  }}
-                />
-                <Legend
-                  verticalAlign="bottom"
-                  height={36}
-                  iconType="circle"
-                  wrapperStyle={{ fontSize: "11px", fontWeight: "600" }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Delay Status Overview Horizontal Bar Chart */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <h3 className="font-bold text-sm text-slate-900">
-                Delay Risk & Stagnation Distribution
-              </h3>
-              <p className="text-xs text-slate-500">
-                Procedural hearing ratios & inactivity timelines
-              </p>
-            </div>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-              Risk Distribution
-            </span>
-          </div>
-
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                layout="vertical"
-                data={delayChartData}
-                margin={{ top: 10, right: 30, left: 40, bottom: 5 }}
+              {/* Drag & Drop Box */}
+              <div
+                onClick={() => setIsUploadModalOpen(true)}
+                className="mt-4 border-2 border-dashed border-indigo-200 hover:border-indigo-400 bg-indigo-50/20 hover:bg-indigo-50/40 rounded-xl p-5 text-center cursor-pointer transition flex flex-col items-center justify-center"
               >
-                <XAxis type="number" tick={{ fontSize: 11 }} />
-                <YAxis
-                  type="category"
-                  dataKey="category"
-                  tick={{ fontSize: 11, fontWeight: "500" }}
-                />
-                <Tooltip
-                  formatter={(value: any) => [`${value} cases`, "Cases"]}
-                  contentStyle={{
-                    borderRadius: "8px",
-                    fontSize: "12px",
-                    border: "1px solid #e2e8f0",
-                  }}
-                />
-                <Bar dataKey="count" radius={[0, 6, 6, 0]}>
-                  {delayChartData.map((entry, index) => (
-                    <Cell key={`bar-${index}`} fill={entry.fill} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+                <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 mb-2">
+                  <UploadCloud className="w-6 h-6" />
+                </div>
+                <p className="text-xs font-semibold text-slate-700">Drag & drop file here</p>
+                <span className="text-[10px] text-slate-400 my-1 font-medium">or</span>
+                <button
+                  type="button"
+                  className="px-4 py-1.5 bg-[#4338ca] hover:bg-[#3730a3] text-white text-xs font-semibold rounded-lg shadow-sm shadow-indigo-200 transition"
+                >
+                  Choose File
+                </button>
+                <p className="text-[10px] text-slate-400 mt-2">Supports .csv, .xlsx files</p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <div className="relative flex py-2 items-center">
+                <div className="flex-grow border-t border-slate-200"></div>
+                <span className="flex-shrink mx-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  OR
+                </span>
+                <div className="flex-grow border-t border-slate-200"></div>
+              </div>
+
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="w-full mt-1 py-2.5 px-4 bg-white border border-indigo-200 hover:border-indigo-300 hover:bg-indigo-50/30 text-indigo-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Case Manually</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 5 Summary Stat Cards (8 cols) */}
+          <div className="xl:col-span-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5 items-stretch">
+            {/* 1. Critical */}
+            <div className="bg-[#fff1f2] border border-rose-100 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+              <div>
+                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-red-600 mb-3">
+                  <AlertTriangle className="w-4 h-4" />
+                </div>
+                <div className="text-2xl font-black text-slate-900 tracking-tight">128</div>
+                <div className="text-xs font-bold text-slate-900 mt-0.5">Critical</div>
+                <p className="text-[10px] text-slate-500 mt-0.5 leading-snug">Needs Urgent Attention</p>
+              </div>
+              <Link
+                to="/cases?priority=Critical"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:text-red-700 mt-4"
+              >
+                <span>View Cases</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+
+            {/* 2. High Priority */}
+            <div className="bg-[#fff7ed] border border-orange-100 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+              <div>
+                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 mb-3">
+                  <Flag className="w-4 h-4" />
+                </div>
+                <div className="text-2xl font-black text-slate-900 tracking-tight">326</div>
+                <div className="text-xs font-bold text-slate-900 mt-0.5">High Priority</div>
+                <p className="text-[10px] text-slate-500 mt-0.5 leading-snug">High Priority Cases</p>
+              </div>
+              <Link
+                to="/cases?priority=High"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-orange-600 hover:text-orange-700 mt-4"
+              >
+                <span>View Cases</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+
+            {/* 3. Medium Priority */}
+            <div className="bg-[#fefce8] border border-amber-100 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+              <div>
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 mb-3">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div className="text-2xl font-black text-slate-900 tracking-tight">542</div>
+                <div className="text-xs font-bold text-slate-900 mt-0.5">Medium Priority</div>
+                <p className="text-[10px] text-slate-500 mt-0.5 leading-snug">Medium Priority Cases</p>
+              </div>
+              <Link
+                to="/cases?priority=Medium"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 hover:text-amber-700 mt-4"
+              >
+                <span>View Cases</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+
+            {/* 4. Routine */}
+            <div className="bg-[#f0fdf4] border border-emerald-100 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+              <div>
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-3">
+                  <Calendar className="w-4 h-4" />
+                </div>
+                <div className="text-2xl font-black text-slate-900 tracking-tight">842</div>
+                <div className="text-xs font-bold text-slate-900 mt-0.5">Routine</div>
+                <p className="text-[10px] text-slate-500 mt-0.5 leading-snug">Routine Cases</p>
+              </div>
+              <Link
+                to="/cases?priority=Routine"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:text-emerald-700 mt-4"
+              >
+                <span>View Cases</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+
+            {/* 5. Fast-Track Eligible */}
+            <div className="bg-[#faf5ff] border border-purple-100 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+              <div>
+                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mb-3">
+                  <Users className="w-4 h-4" />
+                </div>
+                <div className="text-2xl font-black text-slate-900 tracking-tight">214</div>
+                <div className="text-xs font-bold text-slate-900 mt-0.5">Fast-Track Eligible</div>
+                <p className="text-[10px] text-slate-500 mt-0.5 leading-snug">Fast-Track / Settlement Opportunities</p>
+              </div>
+              <Link
+                to="/cases?fast_track=Eligible"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-600 hover:text-purple-700 mt-4"
+              >
+                <span>View Cases</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Quick Actionable Alerts */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="w-5 h-5 text-red-600" />
-            <h3 className="font-bold text-sm text-slate-900">
-              High-Impact Actionable Triage Alerts
-            </h3>
+        {/* Middle Section: 3 Columns (Cases by Priority, Delay Status Overview, Quick Alerts) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          {/* Card 1: Cases by Priority */}
+          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <h3 className="text-xs font-bold text-slate-900 mb-2">Cases by Priority</h3>
+            <div className="flex items-center justify-between gap-4 h-56">
+              <div className="relative w-44 h-44 shrink-0">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={priorityData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={52}
+                      outerRadius={70}
+                      paddingAngle={3}
+                      dataKey="count"
+                    >
+                      {priorityData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-lg font-extrabold text-slate-900">2,052</span>
+                  <span className="text-[10px] text-slate-400 font-medium">Total Cases</span>
+                </div>
+              </div>
+
+              {/* Legend */}
+              <div className="space-y-2 flex-1 pr-2">
+                {priorityData.map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-[11px]">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                      <span className="text-slate-600 font-medium">{item.name}</span>
+                    </div>
+                    <span className="text-slate-900 font-bold">
+                      {item.count} <span className="text-slate-400 font-normal">({item.percent})</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <span className="text-[11px] text-slate-500 font-medium">
-            Rule-Based & Predictive Triggers
+
+          {/* Card 2: Delay Status Overview */}
+          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <h3 className="text-xs font-bold text-slate-900 mb-2">Delay Status Overview</h3>
+            <div className="h-56 w-full flex flex-col justify-center">
+              <ResponsiveContainer width="100%" height="80%">
+                <BarChart
+                  layout="vertical"
+                  data={delayData}
+                  margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
+                >
+                  <XAxis type="number" domain={[0, 1000]} ticks={[0, 250, 500, 750, 1000]} tick={{ fontSize: 10 }} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "#64748b", fontWeight: 600 }} width={80} />
+                  <Tooltip contentStyle={{ fontSize: "11px", borderRadius: "8px" }} />
+                  <Bar dataKey="count" radius={[0, 6, 6, 0]}>
+                    {delayData.map((entry, index) => (
+                      <Cell key={`bar-${index}`} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Card 3: Quick Alerts */}
+          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+              <h3 className="text-xs font-bold text-slate-900 mb-3">Quick Alerts</h3>
+              <div className="space-y-3">
+                <Link
+                  to="/alerts"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 border border-slate-100 transition group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                      <AlertTriangle className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900">
+                      56 cases crossing undertrial threshold
+                    </span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </Link>
+
+                <Link
+                  to="/alerts"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 border border-slate-100 transition group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                      <Clock className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900">
+                      217 cases near statutory deadline
+                    </span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </Link>
+
+                <Link
+                  to="/alerts"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-slate-50 border border-slate-100 transition group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                      <Calendar className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900">
+                      1,127 cases with no progress &gt; 3 months
+                    </span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </Link>
+              </div>
+            </div>
+
+            <Link
+              to="/alerts"
+              className="w-full py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 text-center transition flex items-center justify-center gap-1.5 mt-3"
+            >
+              <span>View All Alerts</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Bottom Section: Key Statistics Banner */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="flex-1">
+            <h4 className="text-xs font-bold text-slate-900 mb-3">Key Statistics</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {/* Metric 1 */}
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xl font-extrabold text-slate-900">12,842</div>
+                  <div className="text-[11px] text-slate-500 font-medium">Total Pending Cases</div>
+                </div>
+              </div>
+
+              {/* Metric 2 */}
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Hourglass className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xl font-extrabold text-slate-900">4.2 yrs</div>
+                  <div className="text-[11px] text-slate-500 font-medium">Average Case Age</div>
+                </div>
+              </div>
+
+              {/* Metric 3 */}
+              <div className="flex items-center gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xl font-extrabold text-slate-900">2,341</div>
+                  <div className="text-[11px] text-slate-500 font-medium">
+                    Stagnating Cases <span className="text-slate-400">(No progress &gt; 6 months)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Large CTA Button */}
+          <button
+            onClick={() => navigate("/cases")}
+            className="w-full lg:w-auto px-8 py-4 bg-[#4338ca] hover:bg-[#3730a3] text-white rounded-2xl shadow-lg shadow-indigo-200 transition flex items-center justify-between gap-6 group"
+          >
+            <div className="flex items-center gap-3 text-left">
+              <List className="w-6 h-6 text-indigo-200" />
+              <div>
+                <div className="text-sm font-bold text-white">View Prioritized Cases</div>
+                <div className="text-[11px] text-indigo-200">See AI-prioritized case list</div>
+              </div>
+            </div>
+            <ArrowRight className="w-5 h-5 text-indigo-200 group-hover:translate-x-1 transition" />
+          </button>
+        </div>
+
+        {/* Footer Judicial Notice */}
+        <div className="flex items-center justify-center gap-2 text-center text-xs text-slate-500 pt-2 pb-6">
+          <Shield className="w-4 h-4 text-slate-400" />
+          <span>
+            AI assists in prioritization based on legal rules and case history. Final decisions remain with the judicial authority.
           </span>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
-          {stats.quick_alerts.map((alert, idx) => (
-            <div
-              key={idx}
-              onClick={() => onNavigateToCases(alert.filter)}
-              className="p-3.5 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50/30 transition cursor-pointer flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <span
-                  className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    alert.severity === "Critical"
-                      ? "bg-red-100 text-red-700"
-                      : alert.severity === "High"
-                      ? "bg-orange-100 text-orange-700"
-                      : "bg-amber-100 text-amber-700"
-                  }`}
-                >
-                  {alert.type}
-                </span>
-                <span className="text-xs font-bold text-slate-700">
-                  {alert.count} cases
-                </span>
-              </div>
-              <p className="text-xs font-semibold text-slate-800 leading-snug">
-                {alert.title}
-              </p>
-              <div className="mt-2 text-[11px] text-blue-600 font-semibold flex items-center gap-1">
-                <span>Filter docket</span>
-                <ArrowRight className="w-3 h-3" />
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
-      {/* Prominent Disclaimer Footer */}
-      <div className="p-3.5 rounded-lg bg-slate-100 border border-slate-300 text-center text-xs text-slate-600">
-        <span className="font-bold text-slate-800">Judicial Notice: </span>
-        {stats.disclaimer}
-      </div>
+      {/* Modals */}
+      <AddCaseModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={(id) => navigate(`/cases/${id}`)}
+      />
+      <UploadCsvModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onSuccess={() => {
+          fetchStats();
+          navigate("/cases");
+        }}
+      />
     </div>
   );
 };
