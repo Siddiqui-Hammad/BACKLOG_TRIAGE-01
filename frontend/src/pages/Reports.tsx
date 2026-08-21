@@ -43,24 +43,24 @@ export const Reports: React.FC = () => {
   ];
 
   const priorityPie = [
-    { name: "Critical (85-100)", count: 128, percent: "6.2%", color: "#ef4444" },
-    { name: "High (70-84)", count: 326, percent: "15.9%", color: "#f97316" },
-    { name: "Medium (45-69)", count: 542, percent: "26.4%", color: "#eab308" },
-    { name: "Routine (0-44)", count: 842, percent: "41.0%", color: "#10b981" },
+    { name: "Critical (85-100)", count: "128 (6.2%)", color: "#ef4444", value: 128 },
+    { name: "High (70-84)", count: "326 (15.9%)", color: "#f97316", value: 326 },
+    { name: "Medium (45-69)", count: "542 (26.4%)", color: "#eab308", value: 542 },
+    { name: "Routine (0-44)", count: "842 (41.0%)", color: "#10b981", value: 842 },
   ];
 
   const delayPie = [
-    { name: "High Delay (>12M)", count: 614, percent: "29.9%", color: "#ef4444" },
-    { name: "Medium Delay (3-12M)", count: 828, percent: "40.4%", color: "#f97316" },
-    { name: "Low Delay (<3M)", count: 610, percent: "29.7%", color: "#10b981" },
+    { name: "High Delay (>12M)", count: "614 (29.9%)", color: "#ef4444", value: 614 },
+    { name: "Medium Delay (3-12M)", count: "828 (40.4%)", color: "#f97316", value: 828 },
+    { name: "Low Delay (<3M)", count: "610 (29.7%)", color: "#10b981", value: 610 },
   ];
 
   const feedbackPie = [
-    { name: "Accepted", count: 568, percent: "45.5%", color: "#10b981" },
-    { name: "Priority Changed", count: 356, percent: "28.5%", color: "#f59e0b" },
-    { name: "Deferred", count: 152, percent: "12.2%", color: "#3b82f6" },
-    { name: "Overridden", count: 110, percent: "8.8%", color: "#ef4444" },
-    { name: "Others", count: 62, percent: "5.0%", color: "#64748b" },
+    { name: "Accepted", count: "568 (45.5%)", color: "#10b981", value: 568 },
+    { name: "Priority Changed", count: "356 (28.5%)", color: "#f59e0b", value: 356 },
+    { name: "Deferred", count: "152 (12.2%)", color: "#3b82f6", value: 152 },
+    { name: "Overridden", count: "110 (8.8%)", color: "#ef4444", value: 110 },
+    { name: "Others", count: "62 (5.0%)", color: "#64748b", value: 62 },
   ];
 
   const trendData = [
@@ -73,28 +73,28 @@ export const Reports: React.FC = () => {
   ];
 
   const stageBars = [
-    { name: "Filing/Registration", count: 312, percent: "15.2%", color: "#6366f1" },
-    { name: "Pleadings", count: 256, percent: "12.5%", color: "#06b6d4" },
-    { name: "Evidence", count: 642, percent: "31.3%", color: "#10b981" },
-    { name: "Arguments", count: 428, percent: "20.8%", color: "#f59e0b" },
-    { name: "Judgment Reserved", count: 246, percent: "12.0%", color: "#ef4444" },
-    { name: "Others", count: 168, percent: "8.2%", color: "#64748b" },
+    { name: "Filing/Registration", count: "312 (15.2%)", width: "15.2%", color: "#6366f1" },
+    { name: "Pleadings", count: "256 (12.5%)", width: "12.5%", color: "#06b6d4" },
+    { name: "Evidence", count: "642 (31.3%)", width: "31.3%", color: "#10b981" },
+    { name: "Arguments", count: "428 (20.8%)", width: "20.8%", color: "#f59e0b" },
+    { name: "Judgment Reserved", count: "246 (12.0%)", width: "12.0%", color: "#ef4444" },
+    { name: "Others", count: "168 (8.2%)", width: "8.2%", color: "#64748b" },
   ];
 
   const courtPendency = [
-    { name: "District Court, Delhi", count: 652, percent: "31.8%" },
-    { name: "Rohini Courts, Delhi", count: 412, percent: "20.1%" },
-    { name: "Karkardooma Courts, Delhi", count: 298, percent: "14.5%" },
-    { name: "Tis Hazari Courts, Delhi", count: 276, percent: "13.5%" },
-    { name: "Saket Courts, Delhi", count: 208, percent: "10.1%" },
+    { name: "District Court, Delhi", count: "652", percent: "31.8%" },
+    { name: "Rohini Courts, Delhi", count: "412", percent: "20.1%" },
+    { name: "Karkardooma Courts, Delhi", count: "298", percent: "14.5%" },
+    { name: "Tis Hazari Courts, Delhi", count: "276", percent: "13.5%" },
+    { name: "Saket Courts, Delhi", count: "208", percent: "10.1%" },
   ];
 
   return (
-    <div className="flex-1 bg-[#f4f6fa] flex flex-col min-h-screen overflow-y-auto font-sans">
+    <div className="flex-1 bg-[#f4f6fa] flex flex-col min-h-screen overflow-y-auto font-sans text-slate-800">
       {/* Top Header */}
-      <header className="px-8 py-4 flex items-center justify-between border-b border-slate-200/60 bg-white sticky top-0 z-10">
+      <header className="px-8 py-5 flex items-center justify-between border-b border-slate-200/70 bg-white sticky top-0 z-10">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Reports</h1>
+          <h1 className="text-2xl font-extrabold text-[#0f172a] tracking-tight">Reports</h1>
           <p className="text-xs text-slate-500 mt-0.5 font-medium">
             Comprehensive insights and analytics on case backlog and prioritization
           </p>
@@ -102,18 +102,18 @@ export const Reports: React.FC = () => {
 
         <div className="flex items-center gap-3">
           {/* Court Officer Pill */}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200/80 rounded-xl shadow-sm text-xs font-semibold text-slate-800">
+          <div className="flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-200 rounded-xl shadow-sm text-xs font-semibold text-slate-800 cursor-pointer">
             <div className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
               <User className="w-3 h-3" />
             </div>
-            <span className="text-[11px] font-bold text-slate-800">Court Officer</span>
+            <span className="text-xs font-bold text-slate-800">Court Officer</span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </div>
 
           {/* Date Range Pill */}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200/80 rounded-xl shadow-sm text-xs font-semibold text-slate-800">
+          <div className="flex items-center gap-2 px-3.5 py-2 bg-white border border-slate-200 rounded-xl shadow-sm text-xs font-semibold text-slate-800 cursor-pointer">
             <Calendar className="w-3.5 h-3.5 text-slate-500" />
-            <span className="text-[11px] font-semibold text-slate-800">12 May 2026 – 12 May 2026</span>
+            <span className="text-xs font-semibold text-slate-800">12 May 2026 – 12 May 2026</span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </div>
 
@@ -121,24 +121,24 @@ export const Reports: React.FC = () => {
           <a
             href="/api/cases/export"
             download="backlog_analytics_report.csv"
-            className="px-3.5 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-700 transition flex items-center gap-1.5 shadow-sm"
+            className="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 rounded-xl text-xs font-bold text-indigo-700 transition flex items-center gap-1.5 shadow-sm"
           >
-            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <Download className="w-3.5 h-3.5 text-indigo-700" />
             <span>Export Report</span>
           </a>
         </div>
       </header>
 
-      <div className="p-7 space-y-5 max-w-[1600px] mx-auto w-full">
+      <div className="p-8 space-y-6 max-w-[1600px] mx-auto w-full">
         {/* Sub-Navigation Pill Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 w-fit">
+        <div className="flex flex-wrap items-center gap-1 bg-[#eef2f6] p-1 rounded-xl border border-slate-200/80 w-fit">
           {subTabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveSubTab(tab)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition ${
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${
                 activeSubTab === tab
-                  ? "bg-white text-indigo-700 shadow-sm"
+                  ? "bg-[#e0e7ff] text-[#4338ca] shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -150,67 +150,59 @@ export const Reports: React.FC = () => {
         {/* Filter Bar */}
         <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-slate-400">Date Range</span>
-            <select className="bg-transparent text-xs font-semibold text-slate-800 outline-none cursor-pointer">
-              <option>12 May 2026 – 12 May 2026</option>
-              <option>Last 30 Days</option>
-              <option>Last 6 Months</option>
-            </select>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date Range</span>
+            <div className="flex items-center gap-1 text-xs font-semibold text-slate-800 mt-0.5 cursor-pointer">
+              <span>12 May 2026 – 12 May 2026</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </div>
           </div>
 
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-slate-400">Court / Bench</span>
-            <select className="bg-transparent text-xs font-semibold text-slate-800 outline-none cursor-pointer">
-              <option>All Courts</option>
-              <option>District Court, Delhi</option>
-              <option>Rohini Courts</option>
-            </select>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Court / Bench</span>
+            <div className="flex items-center gap-1 text-xs font-semibold text-slate-800 mt-0.5 cursor-pointer">
+              <span>All Courts</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </div>
           </div>
 
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-slate-400">Case Type</span>
-            <select className="bg-transparent text-xs font-semibold text-slate-800 outline-none cursor-pointer">
-              <option>All</option>
-              <option>Civil</option>
-              <option>Criminal</option>
-              <option>NI Act 138</option>
-            </select>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Case Type</span>
+            <div className="flex items-center gap-1 text-xs font-semibold text-slate-800 mt-0.5 cursor-pointer">
+              <span>All</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </div>
           </div>
 
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-slate-400">Priority Level</span>
-            <select className="bg-transparent text-xs font-semibold text-slate-800 outline-none cursor-pointer">
-              <option>All</option>
-              <option>Critical</option>
-              <option>High</option>
-              <option>Medium</option>
-            </select>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Priority Level</span>
+            <div className="flex items-center gap-1 text-xs font-semibold text-slate-800 mt-0.5 cursor-pointer">
+              <span>All</span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="px-4 py-2 bg-[#4338ca] hover:bg-[#3730a3] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+            <button className="px-5 py-2.5 bg-[#4338ca] hover:bg-[#3730a3] text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
               <Filter className="w-3.5 h-3.5" />
               <span>Apply Filters</span>
             </button>
-            <button className="px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition flex items-center gap-1">
+            <button className="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition flex items-center gap-1.5">
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset</span>
             </button>
           </div>
         </div>
 
-        {/* Top 5 Metric Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        {/* Top 5 Stat Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {/* Card 1 */}
           <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <FileText className="w-4 h-4" />
-              </div>
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <FileText className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-[11px] text-slate-500 font-medium">Total Pending Cases</span>
-              <div className="text-2xl font-black text-slate-900 tracking-tight">2,052</div>
+              <span className="text-[11px] text-slate-500 font-medium block">Total Pending Cases</span>
+              <div className="text-2xl font-black text-slate-900 tracking-tight mt-0.5">2,052</div>
             </div>
             <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
               <TrendingUp className="w-3 h-3" />
@@ -220,14 +212,12 @@ export const Reports: React.FC = () => {
 
           {/* Card 2 */}
           <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
-                <Flag className="w-4 h-4" />
-              </div>
+            <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
+              <Flag className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-[11px] text-slate-500 font-medium">New Cases (Period)</span>
-              <div className="text-2xl font-black text-slate-900 tracking-tight">312</div>
+              <span className="text-[11px] text-slate-500 font-medium block">New Cases (Period)</span>
+              <div className="text-2xl font-black text-slate-900 tracking-tight mt-0.5">312</div>
             </div>
             <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
               <TrendingDown className="w-3 h-3" />
@@ -237,14 +227,12 @@ export const Reports: React.FC = () => {
 
           {/* Card 3 */}
           <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-                <CheckSquare className="w-4 h-4" />
-              </div>
+            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+              <CheckSquare className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-[11px] text-slate-500 font-medium">Disposed Cases (Period)</span>
-              <div className="text-2xl font-black text-slate-900 tracking-tight">278</div>
+              <span className="text-[11px] text-slate-500 font-medium block">Disposed Cases (Period)</span>
+              <div className="text-2xl font-black text-slate-900 tracking-tight mt-0.5">278</div>
             </div>
             <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
               <TrendingUp className="w-3 h-3" />
@@ -254,14 +242,12 @@ export const Reports: React.FC = () => {
 
           {/* Card 4 */}
           <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                <Scale className="w-4 h-4" />
-              </div>
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <Scale className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-[11px] text-slate-500 font-medium">Average Case Age</span>
-              <div className="text-2xl font-black text-slate-900 tracking-tight">3.8 Years</div>
+              <span className="text-[11px] text-slate-500 font-medium block">Average Case Age</span>
+              <div className="text-2xl font-black text-slate-900 tracking-tight mt-0.5">3.8 Years</div>
             </div>
             <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
               <TrendingUp className="w-3 h-3" />
@@ -271,14 +257,12 @@ export const Reports: React.FC = () => {
 
           {/* Card 5 */}
           <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                <List className="w-4 h-4" />
-              </div>
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <List className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-[11px] text-slate-500 font-medium">Stagnating Cases (&gt;3M)</span>
-              <div className="text-2xl font-black text-slate-900 tracking-tight">1,127</div>
+              <span className="text-[11px] text-slate-500 font-medium block">Stagnating Cases (&gt;3M)</span>
+              <div className="text-2xl font-black text-slate-900 tracking-tight mt-0.5">1,127</div>
             </div>
             <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600">
               <TrendingDown className="w-3 h-3" />
@@ -288,11 +272,11 @@ export const Reports: React.FC = () => {
         </div>
 
         {/* Middle Charts Row (3 Cards) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Card 1: Cases by Priority */}
           <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
             <div>
-              <h3 className="text-xs font-bold text-slate-900 mb-2">Cases by Priority</h3>
+              <h3 className="text-xs font-bold text-slate-900 mb-3">Cases by Priority</h3>
               <div className="flex items-center gap-3 h-48">
                 <div className="relative w-36 h-36 shrink-0">
                   <ResponsiveContainer width="100%" height="100%">
@@ -304,7 +288,7 @@ export const Reports: React.FC = () => {
                         innerRadius={42}
                         outerRadius={58}
                         paddingAngle={2}
-                        dataKey="count"
+                        dataKey="value"
                       >
                         {priorityPie.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
@@ -321,13 +305,11 @@ export const Reports: React.FC = () => {
                 <div className="space-y-1.5 flex-1 text-[11px]">
                   {priorityPie.map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-slate-600">
+                      <span className="flex items-center gap-1.5 text-slate-600 font-medium">
                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
                         {item.name}
                       </span>
-                      <span className="font-bold text-slate-900">
-                        {item.count} <span className="text-slate-400 font-normal">({item.percent})</span>
-                      </span>
+                      <span className="font-bold text-slate-900">{item.count}</span>
                     </div>
                   ))}
                 </div>
@@ -344,7 +326,7 @@ export const Reports: React.FC = () => {
           {/* Card 2: Delay Status Overview */}
           <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
             <div>
-              <h3 className="text-xs font-bold text-slate-900 mb-2">Delay Status Overview</h3>
+              <h3 className="text-xs font-bold text-slate-900 mb-3">Delay Status Overview</h3>
               <div className="flex items-center gap-3 h-48">
                 <div className="relative w-36 h-36 shrink-0">
                   <ResponsiveContainer width="100%" height="100%">
@@ -356,7 +338,7 @@ export const Reports: React.FC = () => {
                         innerRadius={42}
                         outerRadius={58}
                         paddingAngle={2}
-                        dataKey="count"
+                        dataKey="value"
                       >
                         {delayPie.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
@@ -366,16 +348,14 @@ export const Reports: React.FC = () => {
                   </ResponsiveContainer>
                 </div>
 
-                <div className="space-y-2 flex-1 text-[11px]">
+                <div className="space-y-2.5 flex-1 text-[11px]">
                   {delayPie.map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-slate-600">
+                      <span className="flex items-center gap-1.5 text-slate-600 font-medium">
                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
                         {item.name}
                       </span>
-                      <span className="font-bold text-slate-900">
-                        {item.count} <span className="text-slate-400 font-normal">({item.percent})</span>
-                      </span>
+                      <span className="font-bold text-slate-900">{item.count}</span>
                     </div>
                   ))}
                 </div>
@@ -394,16 +374,26 @@ export const Reports: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-xs font-bold text-slate-900">Trend of Pending Cases</h3>
-                <span className="text-[10px] font-bold text-slate-500 cursor-pointer">Last 6 Months ▾</span>
+                <span className="text-[10px] font-bold text-slate-500 cursor-pointer flex items-center gap-1">
+                  <span>Last 6 Months</span>
+                  <ChevronDown className="w-3 h-3" />
+                </span>
               </div>
 
               <div className="h-44 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                     <XAxis dataKey="month" tick={{ fontSize: 9 }} />
-                    <YAxis tick={{ fontSize: 9 }} domain={[1000, 2500]} />
+                    <YAxis tick={{ fontSize: 9 }} domain={[1000, 2500]} ticks={[1200, 1500, 1800, 2100, 2400]} />
                     <Tooltip contentStyle={{ fontSize: "10px", borderRadius: "8px" }} />
-                    <Area type="monotone" dataKey="pending" stroke="#6366f1" strokeWidth={2} fill="#eef2ff" dot={{ r: 3, fill: "#6366f1" }} />
+                    <Area
+                      type="monotone"
+                      dataKey="pending"
+                      stroke="#4338ca"
+                      strokeWidth={2}
+                      fill="#e0e7ff"
+                      dot={{ r: 3.5, fill: "#4338ca" }}
+                    />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -418,7 +408,7 @@ export const Reports: React.FC = () => {
         </div>
 
         {/* Bottom Charts Row (3 Cards) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Card 4: Cases by Current Stage */}
           <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
             <div>
@@ -427,20 +417,25 @@ export const Reports: React.FC = () => {
                 {stageBars.map((stg, i) => (
                   <div key={i}>
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-slate-600">{stg.name}</span>
-                      <span className="font-bold text-slate-900">
-                        {stg.count} <span className="text-slate-400 font-normal">({stg.percent})</span>
-                      </span>
+                      <span className="text-slate-600 font-medium">{stg.name}</span>
+                      <span className="font-bold text-slate-900">{stg.count}</span>
                     </div>
                     <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div className="h-full rounded-full" style={{ width: stg.percent, backgroundColor: stg.color }}></div>
+                      <div className="h-full rounded-full" style={{ width: stg.width, backgroundColor: stg.color }}></div>
                     </div>
                   </div>
                 ))}
+                <div className="flex justify-between text-[9px] text-slate-400 pt-1 font-mono">
+                  <span>0</span>
+                  <span>200</span>
+                  <span>400</span>
+                  <span>600</span>
+                  <span>800</span>
+                </div>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 text-right mt-3">
+            <div className="pt-3 border-t border-slate-100 text-right mt-2">
               <span className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 cursor-pointer">
                 View Stage Analysis →
               </span>
@@ -455,9 +450,9 @@ export const Reports: React.FC = () => {
                 <table className="w-full text-left text-xs">
                   <thead className="border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase">
                     <tr>
-                      <th className="py-2">Court / Bench</th>
-                      <th className="py-2 text-right">Pending Cases</th>
-                      <th className="py-2 text-right">% of Total</th>
+                      <th className="py-2 font-semibold">Court / Bench</th>
+                      <th className="py-2 text-right font-semibold">Pending Cases</th>
+                      <th className="py-2 text-right font-semibold">% of Total</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50 text-[11px]">
@@ -473,7 +468,7 @@ export const Reports: React.FC = () => {
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 text-right mt-3">
+            <div className="pt-3 border-t border-slate-100 text-right mt-2">
               <span className="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 cursor-pointer">
                 View Court-wise Report →
               </span>
@@ -483,7 +478,7 @@ export const Reports: React.FC = () => {
           {/* Card 6: Judge Feedback Summary */}
           <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between">
             <div>
-              <h3 className="text-xs font-bold text-slate-900 mb-2">Judge Feedback Summary</h3>
+              <h3 className="text-xs font-bold text-slate-900 mb-3">Judge Feedback Summary</h3>
               <div className="flex items-center gap-3 h-48">
                 <div className="relative w-36 h-36 shrink-0">
                   <ResponsiveContainer width="100%" height="100%">
@@ -495,7 +490,7 @@ export const Reports: React.FC = () => {
                         innerRadius={42}
                         outerRadius={58}
                         paddingAngle={2}
-                        dataKey="count"
+                        dataKey="value"
                       >
                         {feedbackPie.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
@@ -512,13 +507,11 @@ export const Reports: React.FC = () => {
                 <div className="space-y-1.5 flex-1 text-[11px]">
                   {feedbackPie.map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-slate-600">
+                      <span className="flex items-center gap-1.5 text-slate-600 font-medium">
                         <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
                         {item.name}
                       </span>
-                      <span className="font-bold text-slate-900">
-                        {item.count} <span className="text-slate-400 font-normal">({item.percent})</span>
-                      </span>
+                      <span className="font-bold text-slate-900">{item.count}</span>
                     </div>
                   ))}
                 </div>
