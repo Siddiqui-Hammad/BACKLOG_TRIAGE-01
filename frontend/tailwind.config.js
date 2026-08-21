@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+﻿/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -8,13 +8,19 @@ export default {
     extend: {
       colors: {
         court: {
-          dark: '#0f172a',
-          navy: '#1e293b',
-          accent: '#2563eb',
-          gold: '#d97706',
-          bg: '#f8fafc',
-          border: '#e2e8f0'
+          navy: '#0c132a',
+          dark: '#080d20',
+          bg: '#f4f6fa',
+          purple: '#4f46e5',
+          purpleHover: '#4338ca',
         }
+      },
+      fontFamily: {
+        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+      },
+      boxShadow: {
+        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04)',
+        'card-hover': '0 4px 12px 0 rgba(0, 0, 0, 0.06)',
       }
     },
   },
